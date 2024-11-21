@@ -19,6 +19,7 @@ int count_cargs(t_cmd *cmd)
     return (i);
 }
 
+
 // int count_args(t_toklist *list)
 // {
 //     int i;
@@ -178,6 +179,11 @@ int	check_syntax(char **av, int i)
 	{
         if(ft_strncmp(av[i], "|", 2) == 0)
         {
+            if(i == 0)
+            {
+                write(2, "syntax error near unexpected token `|'\n", 39);
+                return(1);
+            }
             if(av[i +1])
             {
                 if(check_syntax_pipe(av, i) == 1)
@@ -266,7 +272,7 @@ int main(int ac, char **av, char **envp)
             // tmp = tokens;
             if (av)
                 free_arr(av);
-            tokens = data.tokens;
+            //tokens = data.tokens;
             while(tokens)
             {
                 printf("token: %s, type: %d\n", tokens->token, tokens->type);
@@ -274,7 +280,7 @@ int main(int ac, char **av, char **envp)
             }
             // data.count = count_all_args(data.tokens);
             tmp = our_toklist_cmdlist(data.tokens, &data);
-            our_toklistclear(&data.tokens);
+            //our_toklistclear(&data.tokens);
             //our_toklist_cmdlist(data.tokens, &data);
             // printf("args count: %d\n", count);
             int u = 0;
@@ -288,24 +294,20 @@ int main(int ac, char **av, char **envp)
                 while(u < count)
                     printf("args:%s ", tmp->cargs[u++]);
                 printf("\n");
-                t_redir *tmp_in = tmp->inputs;
-                while(tmp_in)
+                t_redir *tmp_redir = tmp->redirs;
+                while(tmp_redir)
                 {
-                    printf("input: %s flag:%d ", tmp_in->file, tmp_in->app);
-                    tmp_in = tmp_in->next;
+                    printf("redirect: %s flag:%d ", tmp_redir->file, tmp_redir->flag);
+                    tmp_redir = tmp_redir->next;
                 }
                 printf("\n");
-                t_redir *tmp_out = tmp->outputs;
-                while(tmp_out)
-                {
-                    printf("output: %s flag:%d ", tmp_out->file, tmp_out->app);
-                    tmp_out = tmp_out->next;
-                }
-                printf("\n");
-                //printf("inf:%s, out:%s, limit:%s\n", tmp->inf, tmp->outf, tmp->limiter);
                 tmp = tmp->next;
             }
         }
+        //     u = 0;
+        // while(tmp->inf[u])
+        //     printf("inf:%s ", tmp->inf[u++]);
+        
         // while(tokens[j].token)
         // {
         //     printf("hello\n");
@@ -320,11 +322,12 @@ int main(int ac, char **av, char **envp)
         // }
         // else
         //{
-        // data.envi = envlist_envarray(data.envir);
-        // if(!data.envi)
-        //     perror("malloc");
-        // //our_execution(&data);
-        // execution(&data, STDIN_FILENO, -1);
+        data.envi = envlist_envarray(data.envir);
+        if(!data.envi)
+            perror("malloc");
+        //our_execution(&data);
+        //execution(&data, STDIN_FILENO, -1);
+        execution(&data, STDIN_FILENO, STDOUT_FILENO);
         //}
         // if (av && av[0])
         // {
@@ -342,7 +345,7 @@ int main(int ac, char **av, char **envp)
             our_toklistclear(&data.tokens);
         if(data.cmds)
             our_cmdlistclear(&data.cmds);
-        printf("in main before next line\n");
+        //printf("in main before next line\n");
         free(line);
         //we need clean everything before next line the allocations
     }
