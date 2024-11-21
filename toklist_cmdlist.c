@@ -104,6 +104,8 @@ t_cmd *our_clistnew(int count)
         return (free(list), (NULL));
     list->cargs[0] = NULL;
     list->redirs = NULL;
+    list->redir_out = 0;
+    list->in_fail = 0;
     //list->inputs = NULL;
    // list->outputs = NULL;
     list->next = NULL;

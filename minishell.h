@@ -57,6 +57,8 @@ typedef struct s_cmd{
     char *cmd;
     char **cargs;
     t_redir *redirs;
+    int redir_out;
+    int in_fail;
     //t_redir *inputs;
     //t_redir *outputs;
     struct s_cmd *next;
@@ -71,6 +73,7 @@ typedef struct s_shell{
     char *cmd_path;
     char **our_args;
     int fd[2];
+    int std[2];
     int   pid;
     int     exit_code;
     
